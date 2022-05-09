@@ -7,7 +7,8 @@ import Animated, {
   useAnimatedStyle,
   withSpring, 
   interpolate,
-  interpolateColors
+  interpolateColors,
+  Extrapolate
 } from 'react-native-reanimated';
 
 import Header from './src/Components/Header';
@@ -52,6 +53,11 @@ export default function App() {
 
     if(scrollY.value <= 0) scrollY.value = withSpring(0)
   })
+  .onEnd(event => {
+    if(scrollY.value >= 300 && scrollY.value < 450){
+      scrollY.value = withSpring(450);
+    }
+  })
 
   const handleAnimatedCard = useAnimatedStyle(() => {
     return {
@@ -77,8 +83,26 @@ export default function App() {
       opacity: interpolate(
         scrollY.value,
         [0, 160, 300],
-        [0, 0.2, 1]
+        [0, 0.5, 1]
       ),
+      transform: [
+        {
+          scale: interpolate(
+            scrollY.value,
+            [0, 50, 300],
+            [0.5, 0.5 , 1],
+            Extrapolate.CLAMP
+          )
+        },
+        {
+          translateY: interpolate(
+            scrollY.value,
+            [0, 300],
+            [0, -20],
+            Extrapolate.CLAMP
+          ),
+        }
+      ]
     }
   })
 
